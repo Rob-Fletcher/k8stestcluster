@@ -64,6 +64,14 @@ test: `kubectl get pods --all-namespaces` look for coreDNS status
 copy the kube config to your local machine:
 `scp esri@k8cluster1:.kube/config ~/.kube/`
 
+
+Repeat steps to install Docker and kubeadm on each worker, then:
+on master:
+`kubeadm token create --print-join-command`
+
+on worker
+`sudo kubeadm join 10.49.53.69:6443 --token <the token>     --discovery-token-ca-cert-hash sha256:<the hash>`
+
 bonus notes:
 
 find ubuntu version
