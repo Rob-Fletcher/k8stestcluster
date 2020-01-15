@@ -1,12 +1,50 @@
 # k8stestcluster
 
+master: k8cluster1.esri.com
+worker: k8cluster2.esri.com
+worker: k8cluster3.esri.com
+worker: k8cluster4.esri.com
+storage: k8cluster5.esri.com
+
 ## 1. Install [Docker CE for Ubuntu 18.04](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+
+```
+sudo apt-get update
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-key fingerprint 0EBFCD88
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+
+then follow the post installation steps:
+https://docs.docker.com/install/linux/linux-postinstall/
 
 add the esri user to the docker group
 `sudo usermod -aG docker $USER`
 
-configure docker to start on book
+log in again to take effect `su esri`
+
+configure docker to start on boot
 `sudo systemctl enable docker`
+
+test docker installation with
+`docker run hello-world`
 
 ## 2. Install kubeadm, kubelet, kubectl and initialize master.
 
@@ -71,6 +109,29 @@ on master:
 
 on worker
 `sudo kubeadm join 10.49.53.69:6443 --token <the token>     --discovery-token-ca-cert-hash sha256:<the hash>`
+
+between last week and this week 1.17.1 was released so now we have version mis-match:
+```
+NAME         STATUS   ROLES    AGE     VERSION
+k8cluster1   Ready    master   5d23h   v1.17.0
+k8cluster2   Ready    <none>   5d1h    v1.17.0
+k8cluster3   Ready    <none>   69s     v1.17.1
+```
+
+Do we downgrade k8cluster3 or upgrade 1&2?
+
+upgrading k8cluster1 & k8cluster2 to 1.17.1:
+https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+
+master and 3 workers complete
+```
+NAME         STATUS   ROLES    AGE     VERSION
+k8cluster1   Ready    master   5d23h   v1.17.1
+k8cluster2   Ready    <none>   5d1h    v1.17.1
+k8cluster3   Ready    <none>   32m     v1.17.1
+k8cluster4   Ready    <none>   51s     v1.17.1
+```
 
 bonus notes:
 
