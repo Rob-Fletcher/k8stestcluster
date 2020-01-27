@@ -146,3 +146,41 @@ sudo!! (repeats last command with sudo prepended)
 
 ctrl+A goes to beginning of line
 ctrl+E goes to end of line
+
+# Dashboard Setup
+
+Following the instructions at https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
+First deply the dashboard
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+```
+
+Then follow the instructions at https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+to create the service account.
+
+## Dashboard Access
+
+To access the dashboard you will have to get the token from the service account:
+
+```bash
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+```
+
+Copy the token that gets printed. You then have to tunnel into the master node and and start the proxy:
+
+```bash
+ssh esri@k8cluster1.esri.com -L 8001:localhost:8001
+
+kubectl proxy
+```
+
+You can then navigate to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+Enter the token and login.
+
+
+
+
+

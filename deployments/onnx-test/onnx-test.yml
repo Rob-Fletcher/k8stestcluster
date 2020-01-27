@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onnx-deployment
+  labels:
+    app: onnx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: onnx
+  template:
+    metadata:
+      labels:
+        app: onnx
+    spec:
+      containers:
+      - name: onnx
+        image: robmotron/onnx-test:v2
+        ports:
+        - containerPort: 50051
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: onnx-service
+  labels:
+    app: onnx
+spec:
+  type: NodePort
+  ports:
+  - name: gRPC
+    port: 50051
+    targetPort: 50051
+    protocol: TCP
+  selector:
+    app: onnx

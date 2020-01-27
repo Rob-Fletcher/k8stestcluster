@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: onnx-service
+  labels:
+    app: onnx
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 50051
+    nodePort: 32352
+    targetPort: 50051
+    protocol: TCP
+  selector:
+    app: onnx

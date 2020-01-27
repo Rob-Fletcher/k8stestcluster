@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onnx-test 
+  labels:
+    app: onnx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: onnx
+  template:
+    metadata:
+      labels:
+        app: onnx
+    spec:
+      containers:
+      - name: onnx
+        image: robmotron/onnx-test:v7
+        ports:
+        - containerPort: 50051
